@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Posto de Saúde</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  h1, h2 {
+    text-align: center;
+  }
+  button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  .logo {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .logo img {
+    max-width: 200px;
+    height: auto;
+  }
+  .nota-fiscal {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+  }
+</style>
+</head>
+<body>
+<div class="logo">
+  <img src="totem saude.png" alt="Logo do Posto de Saúde">
+  <h2>Seu bem-estar, nossa prioridade.</h2>
+</div>
+
+<div class="container" id="container">
+  <h1>Bem-vindo ao Posto de Saúde!</h1>
+  <p>Por favor, selecione o tipo de atendimento desejado:</p>
+  <button onclick="showMedicalSpecialties()">Especialidades Médicas</button>
+  <button onclick="showOtherServices()">Outros Atendimentos</button>
+  <p style="color: red;">Quantidade de Senhas Emitidas: <span id="quantidadeSenhas">0</span></p>
+  <p style="color: red;">Tempo de Espera Estimado: <span id="tempoEspera">0 minutos</span></p>
+</div>
+
+<div id="medicalSpecialties" class="container" style="display: none;">
+  <h2>Especialidades Médicas</h2>
+  <p>Por favor, selecione a especialidade médica desejada:</p>
+  <button onclick="showPriorities('Pediatria')">Pediatria</button>
+  <button onclick="showPriorities('Ortopedia')">Ortopedia</button>
+  <button onclick="showPriorities('Clínica Geral')">Clínica Geral</button>
+  <button onclick="showPriorities('Ginecologia')">Ginecologia</button>
+  <button onclick="showPriorities('Psiquiatria')">Psiquiatria</button>
+  <button onclick="showPriorities('Odontologia')">Odontologia</button>
+  <button onclick="goBack()">Voltar</button>
+</div>
+
+<div id="otherServices" class="container" style="display: none;">
+  <h2>Outros Atendimentos</h2>
+  <p>Por favor, selecione o tipo de atendimento desejado:</p>
+  <button onclick="showPriorities('Farmácia')">Farmácia</button>
+  <button onclick="showPriorities('Regulação')">Regulação</button>
+  <button onclick="showPriorities('Assistência Social')">Assistência Social</button>
+  <button onclick="showPriorities('Insumos')">Insumos</button>
+  <button onclick="showPriorities('Vacinas')">Vacinas</button>
+  <button onclick="goBack()">Voltar</button>
+</div>
+
+<div id="priorities" class="container" style="display: none;">
+  <h2>Prioridades</h2>
+  <p>Você possui alguma deficiência ou prioridade?</p>
+  <button onclick="showPriorityDetails('Sim')">Sim</button>
+  <button onclick="showTicketIssuance('Não')">Não</button>
+  <button onclick="goBack()">Voltar</button>
+</div>
+
+<div id="priorityDetails" class="container" style="display: none;">
+  <h2>Prioridades Detalhadas</h2>
+  <p>Por favor, selecione o tipo de prioridade que você possui:</p>
+  <button onclick="showTicketIssuance('Idoso')">Idoso (acima de 60 anos) </button>
+  <button onclick="showTicketIssuance('Gestante')">Gestante</button>
+  <button onclick="showTicketIssuance('Pessoa com deficiência')">Pessoa com deficiência</button>
+  <button onclick="showTicketIssuance('Outro')">Outros</button>
+  <button onclick="goBack()">Voltar</button>
+</div>
+
+<div id="ticketIssued" class="container" style="display: none;">
+  <h2>Emissão de Senha</h2>
+  <p>Sua senha foi emitida. Por favor, aguarde sua vez.</p>
+  <button onclick="printNotaFiscal()">Imprimir Nota Fiscal</button>
+  <button onclick="goBack()">Voltar</button>
+</div>
+
+<div id="notaFiscal" class="container nota-fiscal" style="display: none;">
+  <h2>Nota de Espera</h2>
+  <div id="notaFiscalContent">
+    <h3>Atendimento Selecionado:</h3>
+    <ul id="atendimentoSelecionado"></ul>
+    <h3>Possui Alguma Deficiência ou Prioridade?</h3>
+    <p id="prioridadeDetalhes"></p>
+    <h3>Senha de Chamada:</h3>
+    <p id="senhaChamada"></p>
+  </div>
+  <h3>Data e Hora:</h3>
+  <p id="dataHora"></p>
+</div>
+
+<script>
+  var previousPages = [];
+  var selections = [];
+  var numNotasImpressas = 0;
+  var numSenhasEmitidas = 0;
+
+  function showMedicalSpecialties() {
+    showPage("medicalSpecialties");
+  }
+
+  function showOtherServices() {
+    showPage("otherServices");
+  }
+
+  function showPriorities(service) {
+    previousPages.push("priorities");
+    showPage("priorities");
+    selections.push(service);
+  }
+
+  function showPriorityDetails(response) {
+    if (response === "Sim") {
+      previousPages.push("priorityDetails");
+      showPage("priorityDetails");
+    } else {
+      showTicketIssuance("Não");
+    }
+  }
+
+  function showTicketIssuance(priority) {
+    // Aqui você pode adicionar lógica para processar a prioridade, se necessário
+    showPage("ticketIssued");
+    selections.push(priority);
+  }
+
+  function printNotaFiscal() {
+    numNotasImpressas++; // Incrementa o número de notas impressas
+    numSenhasEmitidas++; // Incrementa o número de senhas emitidas
+    var atendimentoSelecionado = document.getElementById("atendimentoSelecionado");
+    atendimentoSelecionado.innerHTML = "";
+    for (var i = 0; i < selections.length - 1; i++) {
+      var li = document.createElement("li");
+      li.textContent = selections[i];
+      atendimentoSelecionado.appendChild(li);
+    }
+
+    var prioridadeDetalhes = document.getElementById("prioridadeDetalhes");
+    prioridadeDetalhes.textContent = selections[selections.length - 1];
+
+    var senhaChamada = document.getElementById("senhaChamada");
+    senhaChamada.textContent = generateRandomPassword();
+
+    var dataHora = document.getElementById("dataHora");
+    var dataAtual = new Date();
+    var horaAtual = dataAtual.getHours() + ":" + dataAtual.getMinutes();
+    var dataFormatada = dataAtual.getDate() + "/" + (dataAtual.getMonth() + 1) + "/" + dataAtual.getFullYear();
+    dataHora.textContent = "Data: " + dataFormatada + ", Hora: " + horaAtual;
+
+    showPage("notaFiscal");
+
+    // Calcular o tempo de espera com base na quantidade de senhas emitidas e no tempo médio de atendimento
+    var tempoMedioAtendimento = 15; // minutos
+    var tempoEsperaEstimado = numSenhasEmitidas * tempoMedioAtendimento;
+    document.getElementById("quantidadeSenhas").textContent = numSenhasEmitidas;
+    document.getElementById("tempoEspera").textContent = tempoEsperaEstimado + " minutos";
+
+    // Define um temporizador para retornar ao início após 5 segundos
+    setTimeout(function() {
+      goBackToInitialSelection();
+    }, 5000);
+  }
+
+  function generateRandomPassword() {
+    // Geração de uma senha aleatória simples para a nota fiscal
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var password = "";
+    for (var i = 0; i < 8; i++) {
+      password += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return password;
+  }
+
+  function goBack() {
+    if (previousPages.length > 0) {
+      var lastPage = previousPages.pop();
+      selections.pop(); // Remover seleção ao voltar
+      showPage(lastPage);
+    }
+  }
+
+  function goBackToInitialSelection() {
+    // Limpar histórico de páginas e seleções ao retornar para a seleção inicial
+    previousPages = [];
+    selections = [];
+    showPage("container");
+  }
+
+  function showPage(pageId) {
+    // Função para exibir uma determinada página e ocultar as outras
+    var pages = document.querySelectorAll(".container");
+    for (var i = 0; i < pages.length; i++) {
+      if (pages[i].id === pageId) {
+        pages[i].style.display = "block";
+      } else {
+        pages[i].style.display = "none";
+      }
+    }
+  }
+</script>
+</body>
+</html>
