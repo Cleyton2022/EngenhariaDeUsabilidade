@@ -1,3 +1,10 @@
+ **Trabalho da faculdade, instruções abaixo:**
+ -   Usando os conceitos de usabilidade aprendidos, projetar uma sequência de telas para um TOTEM de um posto de saúde que tem por objetivo a emissão de uma senha levando em conta os seguintes critérios:
+    Existem as especialidades: Pediatria, Ortopedia, Clinica Geral, Ginecologia, Psiquiatria e Odontologia
+    Além das especialidades podem ser criadas senhas para outros atendimentos como: Farmácia, Regulação, Assistência Social, Insumos e Vacinas
+    Em todas as opções devem se considerar as prioridades por lei.
+    O Totem não emite sons, apenas imprime uma senha através de uma impressora acoplada.
+
 # Totem de Emissão de Senhas para Posto de Saúde
 
 O Totem de Emissão de Senhas para Posto de Saúde é uma solução projetada para melhorar a eficiência e a experiência do usuário em postos de saúde. Este projeto consiste em um sistema de autoatendimento que permite aos pacientes emitirem suas senhas de atendimento de forma rápida e intuitiva, considerando diferentes especialidades médicas e serviços disponíveis.
